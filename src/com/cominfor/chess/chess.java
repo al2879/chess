@@ -1,8 +1,10 @@
 package com.cominfor.chess;
 
 import com.sun.javafx.collections.transformation.SortedList;
+import com.sun.jmx.remote.internal.ArrayQueue;
 import sun.java2d.loops.FillRect;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.List;
 import java.awt.event.KeyEvent;
@@ -24,6 +26,7 @@ public class chess {
     private static int runp = 0;
     public cell start_cell;
     public long moves = 0;
+    public static java.util.List<cell> result = new ArrayList<cell>();
 
     public class cell implements Comparable<cell>{
         private int row;
@@ -111,13 +114,14 @@ public class chess {
         moves++;
         nc.set_false();
         if(runp >= RUN_LENGTH){
-            System.out.println("("+nc.column+","+nc.row+")");
+            System.out.println("Solution Found!");
+            result.add(nc);
             return true;
         };
         for(cell i: newmvs)
             if(check_cell(i)){
                 if(gorun(i)){
-                    System.out.println("("+nc.column+","+nc.row+")");
+                    result.add(nc);
                     return true;
                 };
             }
@@ -138,8 +142,7 @@ public class chess {
         Date start_time = Calendar.getInstance().getTime();
         chess mc = new chess();
 
-        if(mc.gorun( mc.start_cell)) System.out.println("Solution Found!");
-        else                         System.out.println("Solution Not Found!");
+        if(!mc.gorun( mc.start_cell)) System.out.println("Solution Not Found!");
         System.out.println("Finishing knight jumps!!");
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
         System.out.format("Timestamp:%s,Moves:%d\n",timeStamp,mc.moves);
@@ -152,6 +155,11 @@ public class chess {
         System.out.println("Time in seconds: " + diffSeconds + " seconds.");
         System.out.println("Time in minutes: " + diffMinutes + " minutes.");
         System.out.println("Time in hours: " + diffHours + " hours.");
+        int j=1;
+        Collections.reverse(result);
+        for(cell i: result){
+            System.out.println(String.format("%d:%d,%d",j++, i.column, i.row));
+        }
         /*final Frame f = new Frame("Draw string")  {
             public void paint (Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
